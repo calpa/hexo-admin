@@ -1,17 +1,20 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 
-var React = require('react')
+const Rendered = ({ text }) => (
+  <div
+    className="post-content"
+  >
+    123
+  </div>
+);
 
-var Rendered = React.createClass({
-  propTypes: {
-    text: React.PropTypes.string
-  },
-  render: function () {
-    return this.transferPropsTo(
-      <div className="post-content"
-        dangerouslySetInnerHTML={{
-          __html: this.props.text || '<h1 class="editor_no-content">There doesn\'t seem to be anything here</h1>'
-        }}/>)
-  }
-})
+Rendered.propTypes = {
+  text: PropTypes.string,
+};
+
+Rendered.defaultProps = {
+  text: 'Nothing Yet...',
+};
 
 module.exports = Rendered;

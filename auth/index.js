@@ -5,36 +5,36 @@
  * `admin.password_hash`.
  */
 
-var cookieParser = require('cookie-parser')
-  , serveStatic = require('serve-static')
-  , session = require('express-session')
-  , bodyParser = require('body-parser')
-  , auth = require('connect-auth')
-  , path = require('path')
-  , authStrategy = require('./strategy')
+const cookieParser = require('cookie-parser');
+const serveStatic = require('serve-static');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+const auth = require('connect-auth');
+const path = require('path');
+const authStrategy = require('./strategy');
 
-module.exports = function (app, hexo) {
+module.exports = (app, hexo) => {
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(cookieParser());
   app.use(session({
-      resave: false,
-      saveUninitialized: false,
-      secret: hexo.config.admin.secret
+    resave: false,
+    saveUninitialized: false,
+    secret: hexo.config.admin.secret,
   }));
-  app.use(hexo.config.root + 'admin', auth(new authStrategy(hexo)));
-  app.use(hexo.config.root + 'admin/login', function (req, res) {
-      if (req.method === 'POST') {
-          req.authenticate(['adminAuth'], function(error, done) {
-              if (done) {
-                  res.writeHead(302, { 'Location':  hexo.config.root + "admin/" });
-                  res.end();
-              }
-          });
-      } else {
-          serveStatic(path.join(__dirname, '../www', 'login'))(req, res);
-      }
+  app.use(`${hexo.config.root}admin`, auth(new authStrategy(hexo)));
+  app.use(`${hexo.config.root}admin/login`, (req, res) => {
+    if (req.method === 'POST') {
+      req.authenticate(['adminAuth'], (error, done) => {
+        if (done) {
+          res.writeHead(302, { Location: `${hexo.config.root}admin/` });
+          res.end();
+        }
+      });
+    } else {
+      serveStatic(path.join(__dirname, '../www', 'login'))(req, res);
+    }
   });
-  app.use(hexo.config.root + 'admin/', function (req, res, next) {
-      req.authenticate(['adminAuth'], next)
+  app.use(`${hexo.config.root}admin/`, (req, res, next) => {
+    req.authenticate(['adminAuth'], next);
   });
-}
+};

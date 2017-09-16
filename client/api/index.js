@@ -1,17 +1,17 @@
 import { handlePost, handleGet } from './handler';
 
-const baseUrl = '';
+const baseUrl = 'http://localhost:3000';
+// const env = 'debug'; // Debug only
+const post = (url, data) => handlePost(baseUrl, url, data);
+const get = (url, data) => handleGet(baseUrl, url, data);
 
-const post = () => handlePost(baseUrl);
-const get = () => handleGet(baseUrl);
-
-export const posts = () => get('/posts/list');
+export const getPosts = () => get('/posts/list');
 // export const post = (id, data) => {
 //   if (data) return post(`/posts/${id}`, data);
 //   return get(`/posts/${id}`);
 // };
 export const newPost = title => post('/posts/new', { title });
-export const pages = () => get('/pages/list');
+export const getPages = () => get('/pages/list');
 export const page = (id, data) => {
   if (data) return post(`/pages/${id}`, data);
   return get(`/pages/${id}`);

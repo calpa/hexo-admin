@@ -4,7 +4,7 @@
   "description": "Adds an admin section to the hexo server",
   "main": "index.js",
   "scripts": {
-    "start": "gulp demo && serve docs/demo/admin",
+    "start": "gulp watch-demo",
     "prepublish": "gulp build"
   },
   "repository": {
@@ -32,6 +32,7 @@
     "deep-assign": "^2.0.0",
     "express-session": "^1.10.3",
     "extend": "^3.0.0",
+    "fundebug-nodejs": "0.0.9",
     "hexo-front-matter": "^0.2.2",
     "hexo-fs": "^0.2.2",
     "hexo-util": "^0.6.1",
