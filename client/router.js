@@ -8,7 +8,7 @@ import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 // import Pages from './pages';
 import Home from './Home';
 import About from './about';
-// import Deploy from './deploy';
+import Deploy from './deploy';
 import Settings from './settings';
 // import AuthSetup from './auth-setup';
 
@@ -30,7 +30,7 @@ const CustomRouter = () => (
           {/* <li><Link to="posts">Posts</Link></li> */}
           {/* <li><Link to="pages">Pages</Link></li> */}
           <li><Link to="about">About</Link></li>
-          {/* <li><Link to="deploy">Deploy</Link></li> */}
+          <li><Link to="deploy">Deploy</Link></li>
           <li><Link to="settings">Settings</Link></li>
         </ul>
       </div>
@@ -42,7 +42,7 @@ const CustomRouter = () => (
         {/* <Route name="page" component={Page} path="/pages/:pageId" /> */}
         {/* <Route name="pages" component={Pages} path="/pages" /> */}
         <Route name="about" component={About} path="/about" />
-        {/* <Route name="deploy" component={Deploy} /> */}
+        <Route name="deploy" component={Deploy} />
         <Route name="settings" component={Settings} path="/settings" />
         {/* <Route name="auth-setup" component={AuthSetup} /> */}
         <Route component={NoMatch} />
