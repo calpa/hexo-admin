@@ -1,40 +1,44 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-// const SettingsCheckbox = require('./settings-checkbox');
+import SettingsCheckbox from './settings-checkbox';
 // const SettingsTextbox = require('./settings-textbox');
 
 const divStyle = {
   whiteSpace: 'nowrap',
 };
 
+const LineNumbers = () => (
+  <SettingsCheckbox
+    name="lineNumbers"
+    enableOptions={{ editor: { lineNumbers: true } }}
+    disableOptions={{ editor: { lineNumbers: false } }}
+    label="Enable line numbering."
+  />);
+
+const SpellCheck = () => (
+  <SettingsCheckbox
+    name="spellcheck"
+    enableOptions={{ editor: { inputStyle: 'contenteditable', spellcheck: true } }}
+    disableOptions={{ editor: { inputStyle: null, spellcheck: false } }}
+    label="Enable spellchecking. (buggy on older browsers)"
+  />);
+
+const AskImageFilename = () => (
+  <SettingsCheckbox
+    name="askImageFilename"
+    label="Always ask for filename."
+    style={{ width: '300px', display: 'inline-block' }}
+  />);
+
+const OverwriteImages = () => (
+  <SettingsCheckbox
+    name="overwriteImages"
+    label="Overwrite images if file already exists."
+    style={{ width: '425px', display: 'inline-block' }}
+  />);
+
 /*
-const LineNumbers = SettingsCheckbox({
-  name: 'lineNumbers',
-  enableOptions: { editor: { lineNumbers: true } },
-  disableOptions: { editor: { lineNumbers: false } },
-  label: 'Enable line numbering.',
-});
-
-const SpellCheck = SettingsCheckbox({
-  name: 'spellcheck',
-  enableOptions: { editor: { inputStyle: 'contenteditable', spellcheck: true } },
-  disableOptions: { editor: { inputStyle: null, spellcheck: false } },
-  label: 'Enable spellchecking. (buggy on older browsers)',
-});
-
-const AskImageFilename = SettingsCheckbox({
-  name: 'askImageFilename',
-  label: 'Always ask for filename.',
-  style: { width: '300px', display: 'inline-block' },
-});
-
-const OverwriteImages = SettingsCheckbox({
-  name: 'overwriteImages',
-  label: 'Overwrite images if file already exists.',
-  style: { width: '425px', display: 'inline-block' },
-});
-
 const ImagePath = SettingsTextbox({
   name: 'imagePath',
   defaultValue: '/images',
@@ -61,8 +65,8 @@ const Settings = () => (
     <hr />
 
     <h2>Editor Settings</h2>
-    {/* {LineNumbers}
-    {SpellCheck} */}
+    <LineNumbers />
+    <SpellCheck />
     <hr />
 
     <h2>Image Pasting Settings</h2>
@@ -70,9 +74,9 @@ const Settings = () => (
       Hexo-admin allows you to paste images you copy from the web or elsewhere directly
       into the editor. Decide how you&apos;d like to handle the pasted images.
     </p>
-    {/* {AskImageFilename}
-      {OverwriteImages}
-      {ImagePath}
+    <AskImageFilename />
+    <OverwriteImages />
+    {/* {ImagePath}
     {ImagePrefix} */}
   </div>
 );
