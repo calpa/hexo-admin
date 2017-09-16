@@ -1,11 +1,15 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
+
 import PropTypes from 'prop-types';
 
 const Rendered = ({ text }) => (
   <div
     className="post-content"
   >
-    123
+    <ReactMarkdown
+      source={text}
+    />
   </div>
 );
 

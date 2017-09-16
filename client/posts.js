@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+
 // import { getPosts } from './api';
 import { getPosts } from './api/dev';
 
@@ -74,7 +76,8 @@ class Posts extends Component {
           <NewPost onNew={this.handleNew} />
           {
             posts.map((post, i) =>
-              (<div
+              (<li
+                aria-hidden
                 key={post._id}
                 className={({
                   posts_post: true,
@@ -98,10 +101,10 @@ class Posts extends Component {
                 >
                   <i className="fa fa-link" />
                 </a>
-                {/* <Link className="posts_edit-link" to="post" postId={post._id}>
+                <Link className="posts_edit-link" to="post" postId={post._id}>
                   <i className="fa fa-pencil" />
-                </Link> */}
-              </div>),
+                </Link>
+              </li>),
             )
           }
         </ul>
