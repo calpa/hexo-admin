@@ -1,17 +1,18 @@
-var admin = require('../../client')
-  , api = require('../../client/api')
+import client from '../../client';
 
-// for debugging
-window.React = require('react')
+export default client;
 
-api.init(require('./test-api.js'), {
-  posts: require('./posts.js'),
-  tagsAndCategories: require('./tags-and-categories.js'),
-  settings: require('./settings.js')
-})
-
-document.addEventListener('DOMContentLoaded', () => {
-    var node = document.createElement('div')
-    document.body.appendChild(node)
-    admin(node)
-});
+// import api from '../../client/api';
+// import posts from './posts';
+// import tagsAndCategories from './tags-and-categories';
+// import settings from './settings';
+// import testApi from './test-api';
+// // const api = require('../../client/api');
+//
+// const run = api.init(testApi, {
+//   posts,
+//   tagsAndCategories,
+//   settings,
+// });
+//
+// export default run;

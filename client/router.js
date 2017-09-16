@@ -1,24 +1,43 @@
+import React from 'react';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 
-var App = require('./app');
-var Post = require('./post')
-var Posts = require('./posts')
-var Page = require('./page')
-var Pages = require('./pages')
-var About = require('./about')
-var Deploy = require('./deploy')
-var Settings = require('./settings')
-var AuthSetup = require('./auth-setup')
-var Route = require('react-router').Route
+// import App from './app';
+// import Post from './post';
+// import Posts from './posts';
+// import Page from './page';
+// import Pages from './pages';
+import About from './about';
+// import Deploy from './deploy';
+import Settings from './settings';
+// import AuthSetup from './auth-setup';
 
-module.exports = () => {
-  return <Route handler={App}>
-    <Route name="posts" handler={Posts} path="/"/>
-    <Route name="post" handler={Post} path="/posts/:postId"/>
-    <Route name="page" handler={Page} path="/pages/:pageId"/>
-    <Route name="pages" handler={Pages} path="/pages"/>
-    <Route name="about" handler={About}/>
-    <Route name="deploy" handler={Deploy}/>
-    <Route name="settings" handler={Settings}/>
-    <Route name="auth-setup" handler={AuthSetup}/>
-  </Route>
-}
+const CustomRouter = () => (
+  <Router>
+    <div>
+      <div className="app_header">
+        <img src="logo.png" className="app_logo" alt="logo" />
+        <span className="app_title">Hexo Admin</span>
+        <ul className="app_nav">
+          <li><Link to="posts">Posts</Link></li>
+          <li><Link to="pages">Pages</Link></li>
+          <li><Link to="about">About</Link></li>
+          <li><Link to="deploy">Deploy</Link></li>
+          <li><Link to="settings">Settings</Link></li>
+        </ul>
+      </div>
+
+      <Switch>
+        {/* <Route name="posts" component={Posts} path="/" /> */}
+        {/* <Route name="post" component={Post} path="/posts/:postId" />
+          <Route name="page" component={Page} path="/pages/:pageId" />
+        <Route name="pages" component={Pages} path="/pages" /> */}
+        <Route name="about" component={About} path="/about" />
+        {/* <Route name="deploy" component={Deploy} /> */}
+        <Route name="settings" component={Settings} path="/settings" />
+        {/* <Route name="auth-setup" component={AuthSetup} /> */}
+      </Switch>
+    </div>
+  </Router>
+);
+
+export default CustomRouter;

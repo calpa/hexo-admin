@@ -1,65 +1,65 @@
+import React from 'react';
 
-var React = require('react/addons')
-var PT = React.PropTypes
-var api = require('./api')
+const PT = React.PropTypes;
+const api = require('./api');
 
-var SettingsCheckbox = React.createClass({
+const SettingsCheckbox = React.createClass({
   propTypes: {
     name: PT.string.isRequired,
     label: PT.string.isRequired,
     style: PT.object,
     enableOptions: PT.object,
     disableOptions: PT.object,
-    onClick: PT.func
+    onClick: PT.func,
   },
 
-  getInitialState: function () {
+  getInitialState() {
     return {
       checked: false,
-    }
+    };
   },
 
-  componentDidMount: function() {
-    var name = this.props.name
-    api.settings().then( (settings) => {
-      var checked
+  componentDidMount() {
+    const name = this.props.name;
+    api.settings().then((settings) => {
+      let checked;
       if (!settings.options) {
-        checked = false
+        checked = false;
       } else {
-        checked = !!settings.options[name]
+        checked = !!settings.options[name];
       }
-      this.setState({checked: checked})
-    })
+      this.setState({ checked });
+    });
   },
 
-  handleChange: function(e) {
-    var name = this.props.name
-    var addedOptions = e.target.checked ? this.props.enableOptions
-                                        : this.props.disableOptions
-    var value = e.target.checked
-    api.setSetting(name, value, addedOptions).then( (result) => {
-      console.log(result.updated)
+  handleChange(e) {
+    const name = this.props.name;
+    const addedOptions = e.target.checked ? this.props.enableOptions
+      : this.props.disableOptions;
+    const value = e.target.checked;
+    api.setSetting(name, value, addedOptions).then((result) => {
+      console.log(result.updated);
       this.setState({
-        checked: result.settings.options[name]
+        checked: result.settings.options[name],
       });
     });
   },
 
-  render: function() {
+  render() {
     return (
       <p style={this.props.style}>
-      <label>
+        <label>
           <input
             checked={this.state.checked}
             type="checkbox"
             onChange={this.handleChange}
             onClick={this.props.onClick}
           />
-          &nbsp; {this.props.label}
+          {this.props.label}
         </label>
       </p>
     );
-  }
+  },
 });
 
-module.exports = SettingsCheckbox
+module.exports = SettingsCheckbox;

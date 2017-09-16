@@ -1,8 +1,9 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-var router = require('./router')
-var React = require('react')
+import App from './app';
 
-module.exports = function (node) {
-  React.renderComponent(router(), node)
-}
-
+module.exports = ReactDOM.render(
+  <App />,
+  document.getElementById('app'),
+);

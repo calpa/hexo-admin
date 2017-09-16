@@ -1,19 +1,19 @@
+import rest from './rest';
 
-var types = {
-  rest: require('./rest'),
-}
+const types = {
+  rest,
+};
 
-var mod = {
+const mod = {
   init: (type, config) => {
-    if ('string' === typeof type) {
-      type = types[type]
+    if (typeof type === 'string') {
+      type = types[type];
     }
-    var api = type(config)
-    for (var name in api) {
-      mod[name] = api[name]
+    const api = type(config);
+    for (const name in api) {
+      mod[name] = api[name];
     }
-  }
+  },
 };
 
 module.exports = mod;
-

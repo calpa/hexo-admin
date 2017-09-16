@@ -5,15 +5,13 @@ const buffer = require('vinyl-buffer');
 // const gutil = require('gulp-util');
 // var uglify = require('gulp-uglify');
 // const sourcemaps = require('gulp-sourcemaps');
-const reactify = require('reactify');
 const rename = require('gulp-rename');
 
 gulp.task('demo', () => {
   const b = browserify({
     entries: './docs/demo/run.js',
     debug: true,
-    transform: [[reactify, { es6: true, everything: true }]],
-  });
+  }).transform('babelify', { presets: ['env', 'react'] });
 
   return b.bundle()
     .pipe(source('./docs/demo/run.js'))
@@ -26,7 +24,7 @@ gulp.task('javascript', () => {
   const b = browserify({
     entries: './client/run.js',
     debug: true,
-    transform: [[reactify, { es6: true, everything: true }]],
+    transform: [['babelify', { es6: true, everything: true }]],
   });
 
   return b.bundle()
@@ -55,6 +53,11 @@ gulp.task('build', ['less', 'javascript']);
 gulp.task('watch', () => {
   gulp.watch('client/**/*.js', ['javascript']);
   gulp.watch('client/**/*.less', ['less']);
+});
+
+gulp.task('watch-demo', () => {
+  gulp.watch('client/**/*.js', ['demo']);
+  gulp.watch('client/**/*.less', ['demo']);
 });
 
 gulp.task('default', ['build', 'watch']);

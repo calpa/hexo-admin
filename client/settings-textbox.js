@@ -1,62 +1,60 @@
+import React from 'react';
 
-var React = require('react/addons')
-var PT = React.PropTypes
-var api = require('./api')
+const PT = React.PropTypes;
+const api = require('./api');
 
-var SettingsTextbox = React.createClass({
+const SettingsTextbox = React.createClass({
   propTypes: {
     name: PT.string.isRequired,
     defaultValue: PT.string.isRequired,
-    label: PT.string.isRequired
+    label: PT.string.isRequired,
   },
 
-  getInitialState: function () {
+  getInitialState() {
     return {
-      value: this.props.defaultValue
-    }
+      value: this.props.defaultValue,
+    };
   },
 
-  componentDidMount: function() {
-    var name = this.props.name
-    var defaultValue = this.props.defaultValue
-    api.settings().then( (settings) => {
-      var value;
+  componentDidMount() {
+    const name = this.props.name;
+    const defaultValue = this.props.defaultValue;
+    api.settings().then((settings) => {
+      let value;
       if (!settings.options) {
-        value = defaultValue
+        value = defaultValue;
+      } else if (!settings.options[name]) {
+        value = defaultValue;
       } else {
-        if(!settings.options[name]) {
-          value = defaultValue
-        } else {
-          value = settings.options[name]
-        }
+        value = settings.options[name];
       }
-      this.setState({value: value})
-    })
+      this.setState({ value });
+    });
   },
 
-  handleChange: function(e) {
-    var name = this.props.name
-    var value = e.target.value
-    api.setSetting(name, value).then( (result) => {
-      console.log(result.updated)
+  handleChange(e) {
+    const name = this.props.name;
+    const value = e.target.value;
+    api.setSetting(name, value).then((result) => {
+      console.log(result.updated);
       this.setState({
-        value: result.settings.options[name]
+        value: result.settings.options[name],
       });
     });
   },
 
-  render: function() {
+  render() {
     return (
       <p>
         <b>{this.props.label}:  </b>
         <input
           type="text"
           onChange={this.handleChange}
-          value ={this.state.value}
+          value={this.state.value}
         />
       </p>
     );
-  }
+  },
 });
 
-module.exports = SettingsTextbox
+module.exports = SettingsTextbox;

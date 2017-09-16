@@ -1,8 +1,8 @@
 
-var marked = require('marked')
-var _ = require('lodash')
+const marked = require('marked');
+const _ = require('lodash');
 
-var anchorId = function(str){
+const anchorId = function (str) {
   return str
     .replace(/\s+/g, '_')
     .replace(/\./g, '-')
@@ -13,7 +13,7 @@ marked.setOptions({
   langPrefix: '',
 });
 
-module.exports = function(data, options){
+module.exports = function (data, options) {
   headingId = {};
 
   return marked(data.text, _.extend({
@@ -23,7 +23,6 @@ module.exports = function(data, options){
     tables: true,
     breaks: true,
     smartLists: true,
-    smartypants: true
+    smartypants: true,
   }, options));
 };
-
