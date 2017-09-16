@@ -6,6 +6,17 @@ const buffer = require('vinyl-buffer');
 // var uglify = require('gulp-uglify');
 // const sourcemaps = require('gulp-sourcemaps');
 const rename = require('gulp-rename');
+const browserSync = require('browser-sync').create();
+const historyApiFallback = require('connect-history-api-fallback');
+
+gulp.task('browser-sync', () => {
+  browserSync.init({
+    server: {
+      baseDir: './docs/demo/admin',
+      middleware: [historyApiFallback()],
+    },
+  });
+});
 
 gulp.task('demo', () => {
   const b = browserify({
@@ -55,9 +66,11 @@ gulp.task('watch', () => {
   gulp.watch('client/**/*.less', ['less']);
 });
 
-gulp.task('watch-demo', () => {
+gulp.task('watch-demo', ['demo', 'browser-sync'], () => {
   gulp.watch('client/**/*.js', ['demo']);
   gulp.watch('client/**/*.less', ['demo']);
 });
+
+// gulp.task('watch-demo', ['demo', 'browser-sync']);
 
 gulp.task('default', ['build', 'watch']);

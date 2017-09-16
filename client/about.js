@@ -1,4 +1,5 @@
 import React from 'react';
+import Package from './components/Package';
 
 const About = () => (
   <div className="about">
@@ -12,6 +13,7 @@ const About = () => (
         <li><a href="https://github.com/jaredly/hexo-admin-plugin">Calpa&apos;s Blog</a></li>
       </ul>
     </p>
+    <Package />
   </div>
 );
 
