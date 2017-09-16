@@ -76,35 +76,36 @@ class Posts extends Component {
           <NewPost onNew={this.handleNew} />
           {
             posts.map((post, i) =>
-              (<li
-                aria-hidden
-                key={post._id}
-                className={({
-                  posts_post: true,
-                  'posts_post--draft': post.isDraft,
-                  'posts_post--selected': i === this.state.selected,
-                })}
-                onDoubleClick={() => this.goTo(post._id)}
-                onClick={() => this.setState({ selected: i })}
-                role="button"
-              >
-                <span className="posts_post-title">
-                  {post.title}
-                </span>
-                <span className="posts_post-date">
-                  {moment(post.date).format('MMM Do YYYY')}
-                </span>
-                <a
-                  className="posts_perma-link"
-                  target="_blank"
-                  // href={path.join(rootPath, '/', post.path)}
+              (
+                <li
+                  aria-hidden
+                  key={post._id}
+                  className={({
+                    posts_post: true,
+                    'posts_post--draft': post.isDraft,
+                    'posts_post--selected': i === this.state.selected,
+                  })}
+                  onDoubleClick={() => this.goTo(post._id)}
+                  onClick={() => this.setState({ selected: i })}
+                  role="button"
                 >
-                  <i className="fa fa-link" />
-                </a>
-                <Link className="posts_edit-link" to="post" postId={post._id}>
-                  <i className="fa fa-pencil" />
-                </Link>
-              </li>),
+                  <span className="posts_post-title">
+                    {post.title}
+                  </span>
+                  <span className="posts_post-date">
+                    {moment(post.date).format('MMM Do YYYY')}
+                  </span>
+                  <a
+                    className="posts_perma-link"
+                    target="_blank"
+                    // href={path.join(rootPath, '/', post.path)}
+                  >
+                    <i className="fa fa-link" />
+                  </a>
+                  <Link className="posts_edit-link" to={`/post/${post._id}`} >
+                    <i className="fa fa-pencil" />
+                  </Link>
+                </li>),
             )
           }
         </ul>

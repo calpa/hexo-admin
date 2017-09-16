@@ -1,165 +1,161 @@
+import React, { Component } from 'react';
 
-var DataFetcher = require('./data-fetcher');
-var api = require('./api');
-var React = require('react/addons')
-var cx = React.addons.classSet
-var Promise = require('es6-promise').Promise
-var marked = require('marked')
-var Editor = require('./editor')
-var _ = require('lodash')
-var moment = require('moment')
-var Router = require('react-router');
-var Confirm = require('./confirm');
+// const DataFetcher = require('./data-fetcher');
+import { getPost, getSettings } from './api/dev';
+import Rendered from './rendered';
 
-var confirm = function (message, options) {
-  var cleanup, component, props, wrapper;
-  if (options == null) {
-    options = {};
+
+const marked = require('marked');
+// const Editor = require('./editor');
+// const _ = require('lodash');
+const moment = require('moment');
+const Router = require('react-router');
+// const Confirm = require('./confirm');
+
+// const confirm = (message, options = {}) => (
+//   <Confirm message={message} options={options} />
+// );
+
+
+// const Post = React.createClass({
+// mixins: [DataFetcher(params => ({
+//   post: api.post(params.postId),
+//   tagsCategoriesAndMetadata: api.tagsCategoriesAndMetadata(),
+//   settings: api.settings(),
+// }))],
+
+class Post extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      updated: moment(),
+    };
   }
 
-  props = $.extend({
-    message: message
-  }, options);
-  wrapper = document.body.appendChild(document.createElement('div'));
-  component = React.renderComponent(<Confirm {...props}/>, wrapper);
-  cleanup = function () {
-    React.unmountComponentAtNode(wrapper);
-    return setTimeout(function () {
-      return wrapper.remove();
+  componentDidMount() {
+    const { postId } = this.props.match.params;
+    getPost(postId).then((data) => {
+      console.log(data);
+      this.setState({
+        updated: moment(),
+        data,
+      });
     });
-  };
 
-  return component.promise.always(cleanup).promise();
-};
+    getSettings().then((settings) => {
+      this.setState({
+        settings,
+      });
+    });
+  }
 
-var Post = React.createClass({
-  mixins: [DataFetcher((params) => {
-    return {
-      post: api.post(params.postId),
-      tagsCategoriesAndMetadata: api.tagsCategoriesAndMetadata(),
-      settings: api.settings()
-    }
-  })],
+  handleChange(update) {
+    const now = moment();
+    const { postId } = this.props.match.params;
 
-  getInitialState: function () {
-    return {
-      updated: moment()
-    }
-  },
-
-  componentDidMount: function () {
-    this._post = _.debounce((update) => {
-      var now = moment()
-      api.post(this.props.params.postId, update).then(() => {
-        this.setState({
-          updated: now
-        })
-      })
-    }, 1000, {trailing: true, loading: true})
-  },
-
-  handleChange: function (update) {
-    var now = moment()
-    api.post(this.props.params.postId, update).then((data) => {
-      var state = {
+    getPost(postId, update).then((data) => {
+      const state = {
         tagsCategoriesAndMetadata: data.tagsCategoriesAndMetadata,
         post: data.post,
         updated: now,
         author: data.post.author,
+      };
+      for (let i = 0; i < data.tagsCategoriesAndMetadata.metadata.length; i++) {
+        const name = data.tagsCategoriesAndMetadata.metadata[i];
+        state[name] = data.post[name];
       }
-      for(var i=0; i<data.tagsCategoriesAndMetadata.metadata.length; i++){
-        var name = data.tagsCategoriesAndMetadata.metadata[i]
-        state[name] = data.post[name]
-      }
-      this.setState(state)
-    })
-  },
+      this.setState(state);
+    });
+  }
 
-  handleChangeContent: function (text) {
+  handleChangeContent(text) {
     if (text === this.state.raw) {
-      return
+      return;
     }
     this.setState({
       raw: text,
       updated: null,
-      rendered: marked(text)
-    })
-    this._post({_content: text})
-  },
+      rendered: marked(text),
+    });
+    this._post({ _content: text });
+  }
 
-  handleChangeTitle: function (title) {
+  handleChangeTitle(title) {
     if (title === this.state.title) {
-      return
+      return;
     }
-    this.setState({title: title});
-    this._post({title: title})
-  },
+    this.setState({ title });
+    this._post({ title });
+  }
 
-  handlePublish: function () {
-    if (!this.state.post.isDraft) return
+  handlePublish() {
+    if (!this.state.post.isDraft) return;
     api.publish(this.state.post._id).then((post) => {
-      this.setState({post: post})
+      this.setState({ post });
     });
-  },
+  }
 
-  handleUnpublish: function () {
-    if (this.state.post.isDraft) return
+  handleUnpublish() {
+    if (this.state.post.isDraft) return;
     api.unpublish(this.state.post._id).then((post) => {
-      this.setState({post: post})
+      this.setState({ post });
     });
-  },
+  }
 
-  handleRemove: function () {
-    var self = this;
+  handleRemove() {
+    const self = this;
     return confirm('Delete this post?', {
       description: 'This operation will move current draft into source/_discarded folder.',
       confirmLabel: 'Yes',
-      abortLabel: 'No'
-    }).then(function () {
+      abortLabel: 'No',
+    }).then(() => {
       api.remove(self.state.post._id).then(
-        Router.transitionTo('posts')
+        Router.transitionTo('posts'),
       );
     });
-  },
+  }
 
-  dataDidLoad: function (name, data) {
-    if (name !== 'post') return
-    var parts = data.raw.split('---');
-    var _slice = parts[0] === '' ? 2 : 1;
-    var raw = parts.slice(_slice).join('---').trim();
+  dataDidLoad(name, data) {
+    if (name !== 'post') return;
+    const parts = data.raw.split('---');
+    const _slice = parts[0] === '' ? 2 : 1;
+    const raw = parts.slice(_slice).join('---').trim();
     this.setState({
       title: data.title,
       initialRaw: raw,
-      raw: raw,
-      rendered: data.content
-    })
-  },
-
-  render: function () {
-    var post = this.state.post
-    var settings = this.state.settings
-    if (!post || !this.state.tagsCategoriesAndMetadata || !settings) {
-      return <span>Loading...</span>
-    }
-    return Editor({
-      post: this.state.post,
-      raw: this.state.initialRaw,
-      updatedRaw: this.state.raw,
-      wordCount: this.state.raw ? this.state.raw.split(' ').length : 0,
-      isDraft: post.isDraft,
-      updated: this.state.updated,
-      title: this.state.title,
-      rendered: this.state.rendered,
-      onChange: this.handleChange,
-      onChangeContent: this.handleChangeContent,
-      onChangeTitle: this.handleChangeTitle,
-      onPublish: this.handlePublish,
-      onUnpublish: this.handleUnpublish,
-      onRemove: this.handleRemove,
-      tagsCategoriesAndMetadata: this.state.tagsCategoriesAndMetadata,
-      adminSettings: settings
-    })
+      raw,
+      rendered: data.content,
+    });
   }
-});
 
-module.exports = Post;
+  render() {
+    const { data, settings } = this.state;
+    if (!data || !settings) {
+      return <span>Loading Post Data, Please wait...</span>;
+    }
+    return (
+      <Rendered text={data.raw} />
+    );
+
+    // return Editor({
+    //   post: this.state.post,
+    //   raw: this.state.initialRaw,
+    //   updatedRaw: this.state.raw,
+    //   wordCount: this.state.raw ? this.state.raw.split(' ').length : 0,
+    //   isDraft: post.isDraft,
+    //   updated: this.state.updated,
+    //   title: this.state.title,
+    //   rendered: this.state.rendered,
+    //   onChange: this.handleChange,
+    //   onChangeContent: this.handleChangeContent,
+    //   onChangeTitle: this.handleChangeTitle,
+    //   onPublish: this.handlePublish,
+    //   onUnpublish: this.handleUnpublish,
+    //   onRemove: this.handleRemove,
+    //   tagsCategoriesAndMetadata: this.state.tagsCategoriesAndMetadata,
+    //   adminSettings: settings,
+    // });
+  }
+}
+
+export default Post;

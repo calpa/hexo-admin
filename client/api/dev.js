@@ -49,19 +49,17 @@ export const getPosts = () => {
   console.log(config);
   return new Promise(resolve => resolve(config.posts));
 };
-export const post = (id, data) => {
-  if (data) {
-    for (const name in data) {
-      ids[id][name] = data[name];
+export const getPost = id =>
+  // Create a Promise
+  new Promise((resolve, reject) => {
+    // Find the first post with that id
+    const data = config.posts.find(x => x._id === id);
+    if (data) {
+      return resolve(data);
     }
-    if (data._content) {
-      // ids[id].raw = yfm.stringify(ids[id])
-      // ids[id].content = render({ text: data._content });
-    }
-    return Promise.resolve({ post: ids[id], tagsAndCategories: config.tagsAndCategories });
-  }
-  return Promise.resolve(ids[id]);
-};
+
+    return reject();
+  });
 
 export const getNewPost = (title) => {
   const post = newPost(title);
