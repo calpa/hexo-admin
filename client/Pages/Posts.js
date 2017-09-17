@@ -41,9 +41,7 @@ class Posts extends Component {
   }
 
   componentDidMount() {
-    console.log(getPosts);
     getPosts().then((posts) => {
-      console.log(posts);
       this.setState(() => ({ posts }));
     });
   }
