@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-const api = require('./api');
+import { deploy } from '../api';
 
 const divStyle = {
   whiteSpace: 'nowrap',
@@ -29,7 +29,7 @@ class Deploy extends Component {
       stderr: '',
       status: 'loading',
     });
-    api.deploy(message).then((result) => {
+    deploy(message).then((result) => {
       this.setState({
         status: result.error ? 'error' : 'success',
         error: result.error,

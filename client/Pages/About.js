@@ -1,5 +1,5 @@
 import React from 'react';
-import Package from './components/Package';
+import Package from '../components/Package';
 
 const About = () => (
   <div className="about">

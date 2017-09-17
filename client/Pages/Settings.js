@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import SettingsCheckbox from './settings-checkbox';
+import SettingsCheckbox from '../settings-checkbox';
 // const SettingsTextbox = require('./settings-textbox');
 
 const divStyle = {

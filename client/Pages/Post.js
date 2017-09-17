@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
 // const DataFetcher = require('./data-fetcher');
-import { getPost, getSettings } from './api/dev';
-import Rendered from './rendered';
+import { getPost, getSettings } from '../api/dev';
+import Rendered from '../rendered';
 
 
 const marked = require('marked');

@@ -1,16 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 
-// import App from './app';
-import Post from './post';
-import Posts from './posts';
-// import Page from './page';
-// import Pages from './pages';
-import Home from './Home';
-import About from './about';
-import Deploy from './deploy';
-import Settings from './settings';
-// import AuthSetup from './auth-setup';
+import Pages from './Pages';
+
+const { Home, Posts, Post, About, Deploy, Settings } = Pages;
 
 const NoMatch = ({ location }) => (
   <div>

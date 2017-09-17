@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 // import { getPosts } from './api';
-import { getPosts } from './api/dev';
+import { getPosts } from '../api/dev';
 
-import NewPost from './new-post';
+import NewPost from '../new-post';
+import Rendered from '../rendered';
 
 // import DataFetcher from './data-fetcher';
 
@@ -17,7 +18,6 @@ import NewPost from './new-post';
 const moment = require('moment');
 // const SinceWhen = require('./since-when');
 
-const Rendered = require('./rendered');
 
 // const NewPost = require('./new-post');
 // const api = require('./api');
@@ -40,7 +40,8 @@ class Posts extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
+    console.log(getPosts);
     getPosts().then((posts) => {
       console.log(posts);
       this.setState(() => ({ posts }));
