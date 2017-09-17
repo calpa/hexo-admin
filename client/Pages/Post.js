@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { Editor, EditorState, RichUtils } from 'draft-js';
+
+import { EditorState } from 'draft-js';
+import Editor from 'draft-js-plugins-editor';
+import createMarkdownShortcutsPlugin from 'draft-js-markdown-shortcuts-plugin';
 
 // const DataFetcher = require('./data-fetcher');
 import { getPost, getSettings } from '../api/dev';
@@ -27,6 +30,10 @@ const moment = require('moment');
 //   tagsCategoriesAndMetadata: api.tagsCategoriesAndMetadata(),
 //   settings: api.settings(),
 // }))],
+
+const plugins = [
+  createMarkdownShortcutsPlugin(),
+];
 
 class Post extends Component {
   constructor(props) {
@@ -74,14 +81,14 @@ class Post extends Component {
     // });
   }
 
-  handleKeyCommand(command, editorState) {
-    const newState = RichUtils.handleKeyCommand(editorState, command);
-    if (newState) {
-      this.handleChange(newState);
-      return 'handled';
-    }
-    return 'not-handled';
-  }
+  // handleKeyCommand(command, editorState) {
+  //   const newState = RichUtils.handleKeyCommand(editorState, command);
+  //   if (newState) {
+  //     this.handleChange(newState);
+  //     return 'handled';
+  //   }
+  //   return 'not-handled';
+  // }
 
   // handleChangeContent(text) {
   //   if (text === this.state.raw) {
@@ -149,11 +156,12 @@ class Post extends Component {
       return <span>Loading Post Data, Please wait...</span>;
     }
 
+    // handleKeyCommand={(command, state) => this.handleKeyCommand(command, state)}
     return (
       <Editor
         editorState={editorState}
         onChange={state => this.handleChange(state)}
-        handleKeyCommand={(command, state) => this.handleKeyCommand(command, state)}
+        plugins={plugins}
       />
     );
 
