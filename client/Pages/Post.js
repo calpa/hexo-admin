@@ -4,8 +4,13 @@ import { EditorState } from 'draft-js';
 import Editor from 'draft-js-plugins-editor';
 import createMarkdownShortcutsPlugin from 'draft-js-markdown-shortcuts-plugin';
 
+// Converter
+import { stateFromMarkdown } from 'draft-js-import-markdown';
+// import { exportMarkdown } from 'draft-js-export-markdown';
+
 // const DataFetcher = require('./data-fetcher');
 import { getPost, getSettings } from '../api/dev';
+
 
 // import Editor from '../editor';
 
@@ -23,14 +28,6 @@ const moment = require('moment');
 //   <Confirm message={message} options={options} />
 // );
 
-
-// const Post = React.createClass({
-// mixins: [DataFetcher(params => ({
-//   post: api.post(params.postId),
-//   tagsCategoriesAndMetadata: api.tagsCategoriesAndMetadata(),
-//   settings: api.settings(),
-// }))],
-
 const plugins = [
   createMarkdownShortcutsPlugin(),
 ];
@@ -40,20 +37,26 @@ class Post extends Component {
     super(props);
     this.state = {
       updated: moment(),
-      editorState: EditorState.createEmpty(),
+      editorState: {}, // Create an empty object
+      ready: false,
     };
   }
 
   componentDidMount() {
     const { postId } = this.props.match.params; // eslint-disable-line
+
+    // Get Post Raw Data by input postId
     getPost(postId).then((data) => {
-      console.log(data);
+      const ContentState = stateFromMarkdown(data.raw);
+
       this.setState({
         updated: moment(),
-        data,
+        ready: true,
+        editorState: EditorState.createWithContent(ContentState),
       });
     });
 
+    // Get Settings
     getSettings().then((settings) => {
       this.setState({
         settings,
@@ -151,9 +154,12 @@ class Post extends Component {
   // }
 
   render() {
-    const { data, settings, editorState } = this.state;
-    if (!data || !settings) {
-      return <span>Loading Post Data, Please wait...</span>;
+    const { editorState, ready } = this.state;
+
+    if (ready === false) {
+      return (
+        <div>Loading Data, Please wait...</div>
+      );
     }
 
     // handleKeyCommand={(command, state) => this.handleKeyCommand(command, state)}
