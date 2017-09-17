@@ -1,19 +1,20 @@
 
-var React = require('react')
-var CM = require('codemirror/lib/codemirror')
-var PT = React.PropTypes
-var api = require('./api')
+const React = require('react');
+const CM = require('codemirror/lib/codemirror');
 
-var CodeMirror = React.createClass({
+const PT = React.PropTypes;
+const api = require('./api');
+
+const CodeMirror = React.createClass({
   propTypes: {
     onScroll: PT.func,
     forceLineNumbers: PT.bool,
-    adminSettings: PT.object
+    adminSettings: PT.object,
   },
 
-  componentDidUpdate: function (prevProps) {
+  componentDidUpdate(prevProps) {
     if (prevProps.initialValue !== this.props.initialValue) {
-      this.cm.setValue(this.props.initialValue)
+      this.cm.setValue(this.props.initialValue);
     }
     // on forcing line numbers, set or unset linenumbers if not set in adminSettings
     if (prevProps.forceLineNumbers !== this.props.forceLineNumbers) {
@@ -23,80 +24,80 @@ var CodeMirror = React.createClass({
     }
   },
 
-  componentDidMount: function () {
-    require('codemirror/mode/markdown/markdown')
+  componentDidMount() {
+    require('codemirror/mode/markdown/markdown');
 
-    var editorSettings = {
+    const editorSettings = {
       value: this.props.initialValue || '',
       theme: 'default',
       mode: 'markdown',
       lineWrapping: true,
-    }
-    for (var key in this.props.adminSettings.editor) {
-      editorSettings[key] = this.props.adminSettings.editor[key]
+    };
+    for (const key in this.props.adminSettings.editor) {
+      editorSettings[key] = this.props.adminSettings.editor[key];
     }
 
     this.cm = CM(this.getDOMNode(), editorSettings);
     this.cm.on('change', (cm) => {
-      this.props.onChange(cm.getValue())
-    })
+      this.props.onChange(cm.getValue());
+    });
     this.cm.on('scroll', (cm) => {
-      var node = cm.getScrollerElement()
-      var max = node.scrollHeight - node.getBoundingClientRect().height
-      this.props.onScroll(node.scrollTop / max)
-    })
-    var box = this.getDOMNode().parentNode.getBoundingClientRect()
-    this.cm.setSize(box.width, box.height - 32)
+      const node = cm.getScrollerElement();
+      const max = node.scrollHeight - node.getBoundingClientRect().height;
+      this.props.onScroll(node.scrollTop / max);
+    });
+    const box = this.getDOMNode().parentNode.getBoundingClientRect();
+    this.cm.setSize(box.width, box.height - 32);
 
-    window.addEventListener('resize', this._onResize)
+    window.addEventListener('resize', this._onResize);
 
-    document.addEventListener('paste', this._onPaste)
+    document.addEventListener('paste', this._onPaste);
   },
 
-  _onResize: function () {
-    var box = this.getDOMNode().parentNode.getBoundingClientRect()
+  _onResize() {
+    const box = this.getDOMNode().parentNode.getBoundingClientRect();
     // need to subtract header to get proper height without flexbox (see #124)
-    this.cm.setSize(box.width, box.height - 32)
+    this.cm.setSize(box.width, box.height - 32);
   },
 
-  componentWillUnmount: function () {
-    document.removeEventListener('paste', this._onPaste)
-    document.removeEventListener('resize', this._onResize)
+  componentWillUnmount() {
+    document.removeEventListener('paste', this._onPaste);
+    document.removeEventListener('resize', this._onResize);
   },
 
-  _onPaste: function (event) {
-    var items = (event.clipboardData || event.originalEvent.clipboardData).items;
-    if (!items.length) return
-    var blob;
-    for (var i = items.length - 1; i >= 0; i--) {
-      if (items[i].kind == 'file'){
+  _onPaste(event) {
+    const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+    if (!items.length) return;
+    let blob;
+    for (let i = items.length - 1; i >= 0; i--) {
+      if (items[i].kind == 'file') {
         blob = items[i].getAsFile();
         break;
       }
-    };
-    if (!blob) return
+    }
+    if (!blob) return;
 
-    var settings = this.props.adminSettings
-    var reader = new FileReader();
+    const settings = this.props.adminSettings;
+    const reader = new FileReader();
     reader.onload = (event) => {
-      var filename = null;
+      let filename = null;
       if (settings.options) {
-        if(!!settings.options.askImageFilename) {
-          var filePath = !!settings.options.imagePath ? settings.options.imagePath : '/images'
-          filename = prompt(`What would you like to name the photo? All files saved as pngs. Name will be relative to ${filePath}.`, 'image.png')
+        if (settings.options.askImageFilename) {
+          const filePath = settings.options.imagePath ? settings.options.imagePath : '/images';
+          filename = prompt(`What would you like to name the photo? All files saved as pngs. Name will be relative to ${filePath}.`, 'image.png');
         }
       }
-      console.log(filename)
-      api.uploadImage(event.target.result, filename).then((res) =>
-        this.cm.replaceSelection(`\n![${res.msg}](${res.src})`)
+      console.log(filename);
+      api.uploadImage(event.target.result, filename).then(res =>
+        this.cm.replaceSelection(`\n![${res.msg}](${res.src})`),
       );
     };
     reader.readAsDataURL(blob);
   },
 
-  render: function () {
-    return <div/>
-  }
-})
+  render() {
+    return <div />;
+  },
+});
 
-module.exports = CodeMirror
+module.exports = CodeMirror;

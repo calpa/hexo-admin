@@ -1,33 +1,33 @@
-var React = require('react/addons');
-var Modal = require('./modal');
+const React = require('react/addons');
+const Modal = require('./modal');
 
-var Confirm = React.createClass({
+const Confirm = React.createClass({
   displayName: 'Confirm',
-  getDefaultProps: function () {
+  getDefaultProps() {
     return {
       confirmLabel: 'OK',
       abortLabel: 'Cancel',
     };
   },
 
-  abort: function () {
+  abort() {
     return this.promise.reject();
   },
 
-  confirm: function () {
+  confirm() {
     return this.promise.resolve();
   },
 
-  componentDidMount: function () {
+  componentDidMount() {
     this.promise = new $.Deferred();
     return this.refs.confirm.getDOMNode().focus();
   },
 
-  render: function () {
-    var modalBody;
+  render() {
+    let modalBody;
     if (this.props.description) {
       modalBody = (
-        <div className='modal-body'>
+        <div className="modal-body">
           {this.props.description}
         </div>
       );
@@ -35,28 +35,28 @@ var Confirm = React.createClass({
 
     return (
       <Modal>
-        <div className='modal-header'>
-          <h4 className='modal-title'>
+        <div className="modal-header">
+          <h4 className="modal-title">
             {this.props.message}
           </h4>
         </div>
         {modalBody}
-        <div className='modal-footer'>
-          <div className='text-right'>
+        <div className="modal-footer">
+          <div className="text-right">
             <button
-              role='abort'
-              type='button'
-              className='btn btn-default'
+              role="abort"
+              type="button"
+              className="btn btn-default"
               onClick={this.abort}
             >
               {this.props.abortLabel}
             </button>
             {' '}
             <button
-              role='confirm'
-              type='button'
-              className='btn btn-primary'
-              ref='confirm'
+              role="confirm"
+              type="button"
+              className="btn btn-primary"
+              ref="confirm"
               onClick={this.confirm}
             >
               {this.props.confirmLabel}
@@ -68,4 +68,4 @@ var Confirm = React.createClass({
   },
 });
 
-module.exports = Confirm
+module.exports = Confirm;

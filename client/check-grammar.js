@@ -1,86 +1,89 @@
 
-var React = require('react')
-var writeGood = require('write-good')
-var PT = React.PropTypes
+const React = require('react');
+const writeGood = require('write-good');
+
+const PT = React.PropTypes;
 
 // component for individual grammar suggestion
-var GrammarSuggestion = React.createClass({
+const GrammarSuggestion = React.createClass({
   propTypes: {
-    suggestion: PT.string
+    suggestion: PT.string,
   },
 
-  render: function () {
-    var suggestion = this.props.suggestion.split('\n')
-    var reason = suggestion.pop()
-    var endStrong = reason.indexOf('" ') + 1
-    reason = (<p className='grammar_reason'>
+  render() {
+    const suggestion = this.props.suggestion.split('\n');
+    let reason = suggestion.pop();
+    const endStrong = reason.indexOf('" ') + 1;
+    reason = (<p className="grammar_reason">
       <strong>{reason.substr(0, endStrong)}</strong>{reason.slice(endStrong)}
-      </p>)
+    </p>);
 
-    return (<div className='grammar_box'>
-      {suggestion && <pre className='grammar_suggestion'>
+    return (<div className="grammar_box">
+      {suggestion && <pre className="grammar_suggestion">
         {suggestion.join('\n')}
       </pre>}
       {reason}
-    </div>)
-  }
-})
+    </div>);
+  },
+});
 
 // builds array of GrammarSuggestion components from writeGood suggestions
-var suggestionContents = function (suggestions) {
-  var contents = [];
+const suggestionContents = function (suggestions) {
+  let contents = [];
   if (suggestions.length === 0) {
-    var golden = {color: 'gold'};
-    contents = (<div className='grammar_box'>
-      <p className='grammar_reason'><i style={golden} className="fa fa-star"></i>&nbsp;Nice! No possible improvements were found!</p>
-    </div>)
+    const golden = { color: 'gold' };
+    contents = (<div className="grammar_box">
+      <p className="grammar_reason"><i style={golden} className="fa fa-star" />&nbsp;Nice! No possible improvements were found!</p>
+    </div>);
   } else {
-    suggestions.forEach(function (suggestion, i) {
-      contents.push(GrammarSuggestion({suggestion, key: `suggestion-${i}`}))
-    })
+    suggestions.forEach((suggestion, i) => {
+      contents.push(GrammarSuggestion({ suggestion, key: `suggestion-${i}` }));
+    });
   }
-  return contents
-}
+  return contents;
+};
 
 // takes the place of Rendered in the editor, showing grammar suggestions
-var CheckGrammar = React.createClass({
+const CheckGrammar = React.createClass({
   propTypes: {
     toggleGrammar: PT.func,
-    raw: PT.string
+    raw: PT.string,
   },
 
-  getInitialState: function () {
+  getInitialState() {
     return {
       suggestions: [],
     };
   },
 
-  componentDidUpdate: function (prevProps) {
+  componentDidUpdate(prevProps) {
     if (prevProps.raw !== this.props.raw) {
-      var suggestions = writeGood.annotate(this.props.raw, writeGood(this.props.raw))
-      this.setState({suggestions: suggestionContents(suggestions)})
+      const suggestions = writeGood.annotate(this.props.raw, writeGood(this.props.raw));
+      this.setState({ suggestions: suggestionContents(suggestions) });
     }
   },
 
-  componentDidMount: function () {
-    var suggestions = writeGood.annotate(this.props.raw, writeGood(this.props.raw))
-    this.setState({suggestions: suggestionContents(suggestions)})
+  componentDidMount() {
+    const suggestions = writeGood.annotate(this.props.raw, writeGood(this.props.raw));
+    this.setState({ suggestions: suggestionContents(suggestions) });
   },
 
-  render: function () {
-    var creditStyle = {
-      'margin-top': '-24px'
-    }
-    return (<div className='post-content editor_rendered'>
+  render() {
+    const creditStyle = {
+      'margin-top': '-24px',
+    };
+    return (<div className="post-content editor_rendered">
       <h2>Writing Suggestions</h2>
-      <p style={creditStyle}>Brought to you by <a href='https://github.com/btford/write-good' target='_blank'>write-good</a>.</p>
+      <p style={creditStyle}>Brought to you by <a href="https://github.com/btford/write-good" target="_blank">write-good</a>.</p>
       {this.state.suggestions}
-      <button onClick={this.props.toggleGrammar}
-              className='pb-button grammar_backToPreview'>
+      <button
+        onClick={this.props.toggleGrammar}
+        className="pb-button grammar_backToPreview"
+      >
       Back to Preview
       </button>
-    </div>)
-  }
-})
+    </div>);
+  },
+});
 
-module.exports = CheckGrammar
+module.exports = CheckGrammar;

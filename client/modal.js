@@ -1,23 +1,24 @@
-var React = require('react/addons');
-var Modal = React.createClass({
+const React = require('react/addons');
+
+const Modal = React.createClass({
   displayName: 'Modal',
-  backdrop: function () {
-    return <div className='modal-backdrop in' />;
+  backdrop() {
+    return <div className="modal-backdrop in" />;
   },
 
-  modal: function () {
-    var style = { display: 'block' };
+  modal() {
+    const style = { display: 'block' };
     return (
       <div
-        className='modal in'
-        tabIndex='-1'
-        role='dialog'
-        aria-hidden='false'
-        ref='modal'
+        className="modal in"
+        tabIndex="-1"
+        role="dialog"
+        aria-hidden="false"
+        ref="modal"
         style={style}
       >
-        <div className='modal-dialog'>
-          <div className='modal-content'>
+        <div className="modal-dialog">
+          <div className="modal-content">
             {this.props.children}
           </div>
         </div>
@@ -25,7 +26,7 @@ var Modal = React.createClass({
     );
   },
 
-  render: function () {
+  render() {
     return (
       <div>
         {this.backdrop()}
@@ -35,4 +36,4 @@ var Modal = React.createClass({
   },
 });
 
-module.exports = Modal
+module.exports = Modal;

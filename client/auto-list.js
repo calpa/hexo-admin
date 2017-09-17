@@ -1,99 +1,100 @@
 
-var React = require('react/addons')
-var cx = React.addons.classSet
+const React = require('react/addons');
 
-var AutoList = React.createClass({
-  getInitialState: function () {
+const cx = React.addons.classSet;
+
+const AutoList = React.createClass({
+  getInitialState() {
     return {
       selected: null,
-      text: ''
-    }
+      text: '',
+    };
   },
 
-  componentDidUpdate: function (prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevState.selected === null &&
         this.state.selected !== null) {
-      setTimeout(() => this.refs.input.getDOMNode().focus(), 100)
+      setTimeout(() => this.refs.input.getDOMNode().focus(), 100);
     }
   },
 
-  _onChange: function (e) {
-    this.setState({text: e.target.value})
+  _onChange(e) {
+    this.setState({ text: e.target.value });
   },
 
-  _onEdit: function (i, e) {
-    if (e.button !== 0) return
-    e.preventDefault()
-    e.stopPropagation()
+  _onEdit(i, e) {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    e.stopPropagation();
     this.setState({
       selected: i,
-      text: this.props.values[i] || ''
-    })
+      text: this.props.values[i] || '',
+    });
   },
 
-  _onBlur: function () {
-    var values = this.props.values.slice()
+  _onBlur() {
+    const values = this.props.values.slice();
     if (this.props.values.indexOf(this.state.text) === -1) {
       if (this.state.selected >= values.length) {
         if (this.state.text) {
-          values.push(this.state.text)
+          values.push(this.state.text);
         }
       } else {
-        values[this.state.selected] = this.state.text
+        values[this.state.selected] = this.state.text;
       }
     }
     this.setState({
       selected: null,
-      text: ''
+      text: '',
     });
-    this.props.onChange(values)
+    this.props.onChange(values);
   },
 
-  _onRemove: function (i) {
-    var values = this.props.values.slice()
-    if (i >= values.length) return
-    values.splice(i, 1)
+  _onRemove(i) {
+    const values = this.props.values.slice();
+    if (i >= values.length) return;
+    values.splice(i, 1);
     if (this.state.selected !== null &&
         i < this.state.selected) {
-      this.setState({selected: i-1})
+      this.setState({ selected: i - 1 });
     }
-    this.props.onChange(values)
+    this.props.onChange(values);
   },
 
-  _onKeyDown: function (e) {
+  _onKeyDown(e) {
     if (e.key === 'Enter') {
-      if (!this.state.text) return
-      this.addAfter()
+      if (!this.state.text) return;
+      this.addAfter();
     }
   },
 
-  addAfter: function () {
+  addAfter() {
     if (this.props.values.indexOf(this.state.text) !== -1) {
-      return
+      return;
     }
-    var values = this.props.values.slice()
+    const values = this.props.values.slice();
     if (this.state.selected === values.length) {
-      values.push(this.state.text)
-      this.props.onChange(values)
+      values.push(this.state.text);
+      this.props.onChange(values);
       return this.setState({
         text: '',
-        selected: values.length
-      })
+        selected: values.length,
+      });
     }
-    values[this.state.selected] = this.state.text
-    values.splice(this.state.selected + 1, 0, '')
-    this.props.onChange(values)
+    values[this.state.selected] = this.state.text;
+    values.splice(this.state.selected + 1, 0, '');
+    this.props.onChange(values);
     this.setState({
       selected: this.state.selected + 1,
-      text: ''
-    })
+      text: '',
+    });
   },
 
-  render: function () {
-    var values = this.props.values.concat(['Add new'])
-    return <div className="autolist">
+  render() {
+    const values = this.props.values.concat(['Add new']);
+    return (<div className="autolist">
       {values.map((item, i) =>
-        <div key={item} className="autolist_item">
+        (<div key={item} className="autolist_item">
           {i === this.state.selected ?
             <input
               ref="input"
@@ -101,22 +102,27 @@ var AutoList = React.createClass({
               value={this.state.text}
               onBlur={this._onBlur}
               onChange={this._onChange}
-              onKeyDown={this._onKeyDown}/> :
-            <div className={cx({
-                    "autolist_show": true,
-                    "autolist_show--new": i === values.length - 1,
-                  })}
-                  onMouseDown={this._onEdit.bind(null, i)}>
+              onKeyDown={this._onKeyDown}
+            /> :
+            <div
+              className={cx({
+                autolist_show: true,
+                'autolist_show--new': i === values.length - 1,
+              })}
+              onMouseDown={this._onEdit.bind(null, i)}
+            >
               {item}
             </div>
           }
           {i < values.length - 1 &&
-            <i className="autolist_del fa fa-times"
-               onClick={this._onRemove.bind(null, i)}/>}
-        </div>
+            <i
+              className="autolist_del fa fa-times"
+              onClick={this._onRemove.bind(null, i)}
+            />}
+        </div>),
       )}
-    </div>
-  }
-})
+    </div>);
+  },
+});
 
-module.exports = AutoList
+module.exports = AutoList;

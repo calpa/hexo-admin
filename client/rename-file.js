@@ -1,97 +1,106 @@
 
-var path = require('path')
-var React = require('react/addons')
-var PT = React.PropTypes
-var api = require('./api')
+const path = require('path');
+const React = require('react/addons');
 
-var RenameFile = React.createClass({
+const PT = React.PropTypes;
+const api = require('./api');
+
+const RenameFile = React.createClass({
   propTypes: {
     post: PT.object,
-    handlePreviewLink: PT.func
+    handlePreviewLink: PT.func,
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       filename: '',
       editing: false,
-      editingName: ''
-    }
+      editingName: '',
+    };
   },
 
-  componentDidMount: function() {
-    var filename = this.props.post.source
+  componentDidMount() {
+    const filename = this.props.post.source;
     this.setState({
-      filename: filename,
-      editingName: filename
-    })
+      filename,
+      editingName: filename,
+    });
   },
 
-  toggleEditing: function() {
+  toggleEditing() {
     this.setState({
       editing: !this.state.editing,
-      editingName: this.state.filename
-    })
+      editingName: this.state.filename,
+    });
   },
 
-  handleEditChange: function(e) {
-    this.setState({editingName: e.target.value})
+  handleEditChange(e) {
+    this.setState({ editingName: e.target.value });
   },
 
-  handleRenameFile: function(e) {
-    var postId = this.props.post._id
-    var editingName = this.state.editingName
-    api.renamePost(postId, editingName).then(result => {
+  handleRenameFile(e) {
+    const postId = this.props.post._id;
+    const editingName = this.state.editingName;
+    api.renamePost(postId, editingName).then((result) => {
       if (!result) {
-        console.log('error renaming file.')
-        this.toggleEditing()
-        return
+        console.log('error renaming file.');
+        this.toggleEditing();
+        return;
       }
-      console.log(`successfully renamed file to ${editingName}`)
+      console.log(`successfully renamed file to ${editingName}`);
 
-      var url = window.location.pathname.split('/')
-      var rootPath = url.slice(0, url.indexOf('admin')).join('/')
-      var previewLink = path.join(rootPath, result.path)
+      const url = window.location.pathname.split('/');
+      const rootPath = url.slice(0, url.indexOf('admin')).join('/');
+      const previewLink = path.join(rootPath, result.path);
 
-      this.setState({filename: editingName, editing: false},
-                    this.props.handlePreviewLink(previewLink))
-    })
+      this.setState({ filename: editingName, editing: false },
+        this.props.handlePreviewLink(previewLink));
+    });
   },
 
-  handleKeyPress: function(e) {
+  handleKeyPress(e) {
     if (e.key === 'Enter') {
-      return this.handleRenameFile()
+      return this.handleRenameFile();
     }
     // esccape key
     if (e.keyCode === 27) {
-      return this.toggleEditing()
+      return this.toggleEditing();
     }
   },
 
-  render: function() {
+  render() {
     return (
-      <div className='fileRename'>
+      <div className="fileRename">
         {!this.state.editing &&
-          <div className='fileRename_display'
-            title='Click to rename'
-            onClick={this.toggleEditing}>
+          <div
+            className="fileRename_display"
+            title="Click to rename"
+            onClick={this.toggleEditing}
+          >
             {this.state.filename}
           </div>}
         {this.state.editing && <span>
-          <input type='text'
+          <input
+            type="text"
             onChange={this.handleEditChange}
             onKeyDown={this.handleKeyPress}
-            defaultValue={this.state.editingName} />
-          <span className='fileRename_buttons'>
-            <i title='Cancel'
-              className='fa fa-times'
-              onClick={this.toggleEditing} />
-            <i title='Rename File'
-              className='fa fa-check'
-              onClick={this.handleRenameFile} />
+            defaultValue={this.state.editingName}
+          />
+          <span className="fileRename_buttons">
+            <i
+              title="Cancel"
+              className="fa fa-times"
+              onClick={this.toggleEditing}
+            />
+            <i
+              title="Rename File"
+              className="fa fa-check"
+              onClick={this.handleRenameFile}
+            />
           </span></span>}
       </div>
-    )
-  }
-})
+    );
+  },
+});
 
-module.exports = RenameFile
+module.exports = RenameFile;
