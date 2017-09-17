@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
+import { Editor, EditorState, RichUtils } from 'draft-js';
 
 // const DataFetcher = require('./data-fetcher');
 import { getPost, getSettings } from '../api/dev';
-import Rendered from '../rendered';
+
+// import Editor from '../editor';
+
+// import Rendered from '../rendered';
 
 
-const marked = require('marked');
-// const Editor = require('./editor');
+// const marked = require('marked');
+
 // const _ = require('lodash');
 const moment = require('moment');
-const Router = require('react-router');
+// const Router = require('react-router');
 // const Confirm = require('./confirm');
 
 // const confirm = (message, options = {}) => (
@@ -29,11 +33,12 @@ class Post extends Component {
     super(props);
     this.state = {
       updated: moment(),
+      editorState: EditorState.createEmpty(),
     };
   }
 
   componentDidMount() {
-    const { postId } = this.props.match.params;
+    const { postId } = this.props.match.params; // eslint-disable-line
     getPost(postId).then((data) => {
       console.log(data);
       this.setState({
@@ -49,112 +54,132 @@ class Post extends Component {
     });
   }
 
-  handleChange(update) {
-    const now = moment();
-    const { postId } = this.props.match.params;
+  handleChange(editorState) {
+    // const now = moment();
+    this.setState({ editorState });
+    // const { postId } = this.props.match.params;
 
-    getPost(postId, update).then((data) => {
-      const state = {
-        tagsCategoriesAndMetadata: data.tagsCategoriesAndMetadata,
-        post: data.post,
-        updated: now,
-        author: data.post.author,
-      };
-      for (let i = 0; i < data.tagsCategoriesAndMetadata.metadata.length; i++) {
-        const name = data.tagsCategoriesAndMetadata.metadata[i];
-        state[name] = data.post[name];
-      }
-      this.setState(state);
-    });
+    // getPost(postId, update).then((data) => {
+    //   const state = {
+    //     tagsCategoriesAndMetadata: data.tagsCategoriesAndMetadata,
+    //     post: data.post,
+    //     updated: now,
+    //     author: data.post.author,
+    //   };
+    //   for (let i = 0; i < data.tagsCategoriesAndMetadata.metadata.length; i += 1) {
+    //     const name = data.tagsCategoriesAndMetadata.metadata[i];
+    //     state[name] = data.post[name];
+    //   }
+    //   this.setState(state);
+    // });
   }
 
-  handleChangeContent(text) {
-    if (text === this.state.raw) {
-      return;
+  handleKeyCommand(command, editorState) {
+    const newState = RichUtils.handleKeyCommand(editorState, command);
+    if (newState) {
+      this.handleChange(newState);
+      return 'handled';
     }
-    this.setState({
-      raw: text,
-      updated: null,
-      rendered: marked(text),
-    });
-    this._post({ _content: text });
+    return 'not-handled';
   }
 
-  handleChangeTitle(title) {
-    if (title === this.state.title) {
-      return;
-    }
-    this.setState({ title });
-    this._post({ title });
-  }
-
-  handlePublish() {
-    if (!this.state.post.isDraft) return;
-    api.publish(this.state.post._id).then((post) => {
-      this.setState({ post });
-    });
-  }
-
-  handleUnpublish() {
-    if (this.state.post.isDraft) return;
-    api.unpublish(this.state.post._id).then((post) => {
-      this.setState({ post });
-    });
-  }
-
-  handleRemove() {
-    const self = this;
-    return confirm('Delete this post?', {
-      description: 'This operation will move current draft into source/_discarded folder.',
-      confirmLabel: 'Yes',
-      abortLabel: 'No',
-    }).then(() => {
-      api.remove(self.state.post._id).then(
-        Router.transitionTo('posts'),
-      );
-    });
-  }
-
-  dataDidLoad(name, data) {
-    if (name !== 'post') return;
-    const parts = data.raw.split('---');
-    const _slice = parts[0] === '' ? 2 : 1;
-    const raw = parts.slice(_slice).join('---').trim();
-    this.setState({
-      title: data.title,
-      initialRaw: raw,
-      raw,
-      rendered: data.content,
-    });
-  }
+  // handleChangeContent(text) {
+  //   if (text === this.state.raw) {
+  //     return;
+  //   }
+  //   this.setState({
+  //     raw: text,
+  //     updated: null,
+  //     rendered: marked(text),
+  //   });
+  //   this._post({ _content: text });
+  // }
+  //
+  // handleChangeTitle(title) {
+  //   if (title === this.state.title) {
+  //     return;
+  //   }
+  //   this.setState({ title });
+  //   this._post({ title });
+  // }
+  //
+  // handlePublish() {
+  //   if (!this.state.post.isDraft) return;
+  //   publish(this.state.post._id).then((post) => {
+  //     this.setState({ post });
+  //   });
+  // }
+  //
+  // handleUnpublish() {
+  //   if (this.state.post.isDraft) return;
+  //   unpublish(this.state.post._id).then((post) => {
+  //     this.setState({ post });
+  //   });
+  // }
+  //
+  // handleRemove() {
+  //   const self = this;
+  //   return confirm('Delete this post?', {
+  //     description: 'This operation will move current draft into source/_discarded folder.',
+  //     confirmLabel: 'Yes',
+  //     abortLabel: 'No',
+  //   }).then(() => {
+  //     remove(self.state.post._id).then(
+  //       Router.transitionTo('posts'),
+  //     );
+  //   });
+  // }
+  //
+  // dataDidLoad(name, data) {
+  //   if (name !== 'post') return;
+  //   const parts = data.raw.split('---');
+  //   const _slice = parts[0] === '' ? 2 : 1;
+  //   const raw = parts.slice(_slice).join('---').trim();
+  //   this.setState({
+  //     title: data.title,
+  //     initialRaw: raw,
+  //     raw,
+  //     rendered: data.content,
+  //   });
+  // }
 
   render() {
-    const { data, settings } = this.state;
+    const { data, settings, editorState } = this.state;
     if (!data || !settings) {
       return <span>Loading Post Data, Please wait...</span>;
     }
+
     return (
-      <Rendered text={data.raw} />
+      <Editor
+        editorState={editorState}
+        onChange={state => this.handleChange(state)}
+        handleKeyCommand={(command, state) => this.handleKeyCommand(command, state)}
+      />
     );
 
-    // return Editor({
-    //   post: this.state.post,
-    //   raw: this.state.initialRaw,
-    //   updatedRaw: this.state.raw,
-    //   wordCount: this.state.raw ? this.state.raw.split(' ').length : 0,
-    //   isDraft: post.isDraft,
-    //   updated: this.state.updated,
-    //   title: this.state.title,
-    //   rendered: this.state.rendered,
-    //   onChange: this.handleChange,
-    //   onChangeContent: this.handleChangeContent,
-    //   onChangeTitle: this.handleChangeTitle,
-    //   onPublish: this.handlePublish,
-    //   onUnpublish: this.handleUnpublish,
-    //   onRemove: this.handleRemove,
-    //   tagsCategoriesAndMetadata: this.state.tagsCategoriesAndMetadata,
-    //   adminSettings: settings,
-    // });
+    /*
+    return (
+      <Editor
+        // post={this.state.post}
+        raw={raw}
+        updatedRaw={raw}
+        wordCount={0} // @TODO: Count Chinese Words
+        isDraft={false}
+        updated={updated}
+        title={'title'}
+        // rendered={rendered}
+
+        onChange={this.handleChange}
+        onChangeContent={this.handleChangeContent}
+        onChangeTitle={this.handleChangeTitle}
+        onPublish={this.handlePublish}
+        onUnpublish={this.handleUnpublish}
+        onRemove={this.handleRemove}
+        // tagsCategoriesAndMetadata={this.state.tagsCategoriesAndMetadata}
+        adminSettings={settings}
+      />
+    );
+    */
   }
 }
 

@@ -40,6 +40,7 @@ const config = {
   posts,
 };
 
+// Create an collection in local
 const ids = {};
 config.posts.forEach((post) => {
   ids[post._id] = post;
